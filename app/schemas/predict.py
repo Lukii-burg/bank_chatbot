@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional, List, Dict
 
 class PredictRequest(BaseModel):
     customer_id: str
@@ -11,6 +12,8 @@ class PredictRequest(BaseModel):
 class PredictResponse(BaseModel):
     transaction_id: int
     prediction_id: int
-    risk_score: float
-    label: str
-    alert_id: int | None = None
+    risk_score: float = Field(..., ge=0.0, le=1.0)
+    label: str           # legit / review / fraud
+    severity: str        # none / med / high
+    alert_id: Optional[int] = None
+    reasons: List[Dict] = []

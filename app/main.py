@@ -10,7 +10,6 @@ from app.api.routes_cases import router as cases_router
 from app.api.routes_chat import router as chat_router
 
 
-
 app = FastAPI(title="Bank Chatbot API")
 
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
