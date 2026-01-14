@@ -4,6 +4,9 @@ from app.models.user import User
 from app.models.transaction import Transaction
 from app.models.prediction import Prediction
 from app.models.alert import Alert
+from app.models.case import Case
+from app.models.case_note import CaseNote
+
 
 
 def get_role_by_name(db: Session, name: str) -> Role | None:
@@ -49,3 +52,34 @@ def create_alert(db: Session, prediction_id: int, severity: str, status: str = "
 
 def get_user_by_id(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
+
+def get_case_by_alert_id(db: Session, alert_id: int):
+    return db.query(Case).filter(Case.alert_id == alert_id).first()
+
+def create_case(db: Session, alert_id: int, priority: str = "med"):
+    c = Case(alert_id=alert_id, priority=priority)
+    db.add(c)
+    db.commit()
+    db.refresh(c)
+    return c
+
+def assign_case(db: Session, case_id: int, user_id: int):
+    c = db.query(Case).filter(Case.id == case_id).first()
+    c.assigned_to_user_id = user_id
+    db.commit()
+    db.refresh(c)
+    return c
+
+def update_case_status(db: Session, case_id: int, status: str):
+    c = db.query(Case).filter(Case.id == case_id).first()
+    c.status = status
+    db.commit()
+    db.refresh(c)
+    return c
+
+def add_case_note(db: Session, case_id: int, user_id: int, note: str):
+    n = CaseNote(case_id=case_id, user_id=user_id, note=note)
+    db.add(n)
+    db.commit()
+    db.refresh(n)
+    return n
